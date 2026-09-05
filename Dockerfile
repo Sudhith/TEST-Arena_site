@@ -34,6 +34,5 @@ USER appuser
 
 EXPOSE 8000
 
-# Uvicorn: 2 workers is reasonable for free-tier RAM (~512 MB)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", \
-     "--workers", "2", "--access-log"]
+# Uvicorn: binds to platform $PORT if provided (Render, Cloud Run, Railway) or defaults to 8000
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2 --access-log"]
