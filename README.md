@@ -5,6 +5,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-10b981.svg?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-059669.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-10b981.svg?style=for-the-badge&logo=docker&logoColor=white)](Dockerfile)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Sudhith/TEST-Arena_site)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b.svg?style=for-the-badge)](LICENSE)
 [![Cost](https://img.shields.io/badge/Cost-₹0%20Zero%20Tier-10b981.svg?style=for-the-badge)](#zero-cost-architecture)
 
