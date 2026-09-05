@@ -1,12 +1,124 @@
 /* static/css/style.css
-   Custom overrides on top of Tailwind CDN.
-   Keep this minimal — Tailwind utilities handle most styling.
+   AI CAPTCHA Solver Testbed — High-Grade Cyber-Obsidian Design System
+   PALETTE: Obsidian Black (#090a0f), Zinc (#18181b, #27272a), Electric Emerald (#10b981, #00f59b), Neon Amber (#f59e0b)
+   STRICT RULE: Zero blue/indigo colors.
 */
 
-/* ── Tile grid images ──────────────────────────────────────────────────── */
-/* Force all grid tiles to a consistent square aspect ratio */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  --bg-primary: #090a0f;
+  --bg-surface: #12141c;
+  --bg-elevated: #1a1d28;
+  --accent-emerald: #10b981;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.25);
+  --accent-mint: #00f59b;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-emerald: rgba(16, 185, 129, 0.35);
+}
+
+/* ── Typography Defaults ─────────────────────────────────────────────────── */
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: #e2e8f0;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+code, pre, .font-mono, input[name="captcha_answer"], .digit-font {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Ambient Background Mesh & Grid ──────────────────────────────────────── */
+.cyber-grid-bg {
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.05) 0%, transparent 40%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+}
+
+/* ── Glassmorphic Cards ──────────────────────────────────────────────────── */
+.glass-panel {
+  background: rgba(18, 20, 28, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px var(--accent-emerald-glow);
+}
+
+.glass-panel-glow {
+  background: rgba(18, 20, 28, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-emerald);
+  box-shadow: 0 0 35px -10px var(--accent-emerald-glow);
+}
+
+/* ── Button Effects ──────────────────────────────────────────────────────── */
+.btn-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #090a0f;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-emerald:hover {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-emerald:active {
+  transform: translateY(0);
+}
+
+.btn-ghost {
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.03);
+  color: #cbd5e1;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent-emerald);
+  color: #ffffff;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+/* ── Tile Grid CAPTCHA ───────────────────────────────────────────────────── */
 .grid-tile {
   aspect-ratio: 1 / 1;
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background-color: #12141c;
+}
+
+.grid-tile:hover {
+  transform: scale(1.02);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .grid-tile img {
@@ -14,31 +126,189 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  /* Prevent right-click save (minor friction for humans) */
   pointer-events: none;
   user-select: none;
-  -webkit-user-drag: none;
 }
 
-/* Selected tile ring animation */
-.grid-tile.ring-2 {
-  transition: box-shadow 0.1s ease-in-out;
+/* Selected state: Emerald Ring & Glow */
+.grid-tile.tile-selected {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+  transform: scale(0.97);
 }
 
-/* ── CAPTCHA digit image ────────────────────────────────────────────────── */
+.grid-tile.tile-selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 185, 129, 0.18);
+  pointer-events: none;
+}
+
+/* Checkmark badge on tile */
+.tile-check-icon {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #10b981;
+  color: #090a0f;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  animation: checkPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+/* ── 6-Digit CAPTCHA Display ─────────────────────────────────────────────── */
 #captcha-img {
-  image-rendering: pixelated; /* keep the distorted look crisp */
-  max-width: 280px;
-  height: auto;
+  image-rendering: pixelated;
+  border-radius: 0.5rem;
+  transition: transform 0.2s ease;
 }
 
-/* ── Monospace CAPTCHA answer input ─────────────────────────────────────── */
-input[name="captcha_answer"] {
-  letter-spacing: 0.4em;
+.digit-input {
+  letter-spacing: 0.5em;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: #12141c;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
 }
 
-/* ── Scrollbar (dark theme) ─────────────────────────────────────────────── */
-::-webkit-scrollbar        { width: 6px; height: 6px; }
-::-webkit-scrollbar-track  { background: #1f2937; }
-::-webkit-scrollbar-thumb  { background: #4b5563; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+.digit-input:focus {
+  outline: none;
+  border-color: var(--accent-emerald);
+  box-shadow: 0 0 15px var(--accent-emerald-glow);
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
+}
+
+/* ── Terminal & Code Preview ─────────────────────────────────────────────── */
+.terminal-window {
+  background: #0d0f15;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.875rem;
+  overflow: hidden;
+}
+
+.terminal-header {
+  background: #151821;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.code-copy-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.code-copy-btn:hover {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* ── Custom Scrollbar ────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090a0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* ── Toast Notifications ─────────────────────────────────────────────────── */
+#global-toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: #18181b;
+  border: 1px solid var(--accent-emerald);
+  color: #f8fafc;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.625rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-emerald-glow);
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.toast-show {
+  transform: translateY(0);
+  opacity: 1;
+}

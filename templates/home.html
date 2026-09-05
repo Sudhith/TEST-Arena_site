@@ -1,113 +1,347 @@
 {% extends "base.html" %}
 
-{% block title %}TEST ARENA — CAPTCHA Solver Testbed{% endblock %}
+{% block title %}TEST ARENA — Autonomous AI CAPTCHA Benchmarking Platform{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 py-20">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-20">
 
-  <!-- Hero -->
-  <div class="text-center mb-16">
-    <div class="inline-flex items-center gap-2 bg-indigo-900/50 border border-indigo-700 rounded-full px-4 py-1.5 text-sm text-indigo-300 mb-6">
-      <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-      Research Platform — ₹0 / month
+  <!-- ── Hero Section ──────────────────────────────────────────────────────── -->
+  <section class="text-center relative pt-6 pb-4">
+    <!-- Pulsing Badge -->
+    <div class="inline-flex items-center gap-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-8 shadow-lg shadow-emerald-950/40 animate-pulse-subtle">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+      <span>AUTONOMOUS BENCHMARK LAB &bull; ZERO MONETARY COST (₹0)</span>
     </div>
-    <h1 class="text-5xl font-extrabold text-white mb-4 tracking-tight">
-      CAPTCHA <span class="text-indigo-400">Solver Testbed</span>
+
+    <!-- Main Headline -->
+    <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold text-white tracking-tight leading-[1.08] max-w-4xl mx-auto mb-6">
+      Train AI Agents to <br class="hidden sm:inline"/>
+      <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500 bg-clip-text text-transparent drop-shadow-sm">
+        Crack Real-World CAPTCHAs
+      </span>
     </h1>
-    <p class="text-xl text-gray-400 max-w-2xl mx-auto">
-      A self-hosted arena to train and benchmark AI agents against real-world CAPTCHA challenges.
-      Two CAPTCHA types. Full REST API. Zero cost.
+
+    <p class="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+      A self-hosted, ethical test arena that accurately mimics distorted 6-digit numeric logins 
+      and 3&times;3 visual reCAPTCHA challenges. Infinitely reproducible. Zero API keys. Instant ground-truth rewards.
     </p>
-  </div>
 
-  <!-- CAPTCHA Type Cards -->
-  <div class="grid md:grid-cols-2 gap-6 mb-16">
-
-    <!-- Digit CAPTCHA card -->
-    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6 hover:border-indigo-600 transition-colors">
-      <div class="w-10 h-10 bg-indigo-700 rounded-xl flex items-center justify-center mb-4">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+    <!-- Hero CTA Buttons -->
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <a href="#playground" class="btn-emerald px-6 py-3 text-sm flex items-center gap-2">
+        <span>⚡ Try Live Playground</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
         </svg>
+      </a>
+      <a href="/login-digit" class="btn-ghost px-5 py-3 text-sm rounded-xl font-medium">
+        Test Digit Login &rarr;
+      </a>
+      <a href="/login-grid" class="btn-ghost px-5 py-3 text-sm rounded-xl font-medium">
+        Test Grid Login &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Platform Metrics / Telemetry Bar ──────────────────────────────────── -->
+  <section class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+    <div class="glass-panel p-5 text-center">
+      <div class="font-display font-bold text-2xl sm:text-3xl text-emerald-400">&lt; 15ms</div>
+      <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-semibold">Gen Latency</div>
+    </div>
+    <div class="glass-panel p-5 text-center">
+      <div class="font-display font-bold text-2xl sm:text-3xl text-emerald-400">100%</div>
+      <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-semibold">Opaque Tile Routing</div>
+    </div>
+    <div class="glass-panel p-5 text-center">
+      <div class="font-display font-bold text-2xl sm:text-3xl text-amber-400">30 / min</div>
+      <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-semibold">Rate Limit Shield</div>
+    </div>
+    <div class="glass-panel p-5 text-center">
+      <div class="font-display font-bold text-2xl sm:text-3xl text-emerald-400">₹0 / mo</div>
+      <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-semibold">Free Tier Ready</div>
+    </div>
+  </section>
+
+  <!-- ── Interactive Live Playground & Terminal ───────────────────────────── -->
+  <section id="playground" class="space-y-6 scroll-mt-24">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          Interactive Sandbox
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          Live Solver Workbench
+        </h2>
       </div>
-      <h2 class="text-xl font-bold text-white mb-2">6-Digit Numeric CAPTCHA</h2>
-      <p class="text-gray-400 text-sm mb-4">
-        Distorted digits with noise, curves, and rotation — replicating university/bank login CAPTCHAs.
-        Perfect for training OCR and CRNN models.
+      
+      <!-- Challenge Switcher Tabs -->
+      <div class="flex items-center bg-[#12141c] p-1 rounded-xl border border-white/[0.08]">
+        <button id="pg-tab-digit" onclick="setPlaygroundType('digit')"
+          class="px-4 py-2 text-sm font-semibold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 transition-all">
+          6-Digit Numeric
+        </button>
+        <button id="pg-tab-grid" onclick="setPlaygroundType('grid')"
+          class="px-4 py-2 text-sm font-medium rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-all">
+          3&times;3 Image Grid
+        </button>
+      </div>
+    </div>
+
+    <!-- Workbench Grid (Interactive Area + Live JSON Terminal) -->
+    <div class="grid lg:grid-cols-12 gap-6">
+      
+      <!-- Left: Interactive Visualizer -->
+      <div class="lg:col-span-6 glass-panel-glow p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/[0.08]">
+            <span class="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Live Rendered Challenge
+            </span>
+            <button onclick="fetchLiveChallenge()" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 transition-colors">
+              ↻ Regenerate
+            </button>
+          </div>
+
+          <!-- Dynamic Render Target -->
+          <div id="pg-display-area" class="py-4">
+            <!-- Injected by static/js/playground.js -->
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/[0.08] text-xs text-zinc-500 flex items-center justify-between">
+          <span>Backend state: <span id="pg-status-text" class="text-zinc-300 font-mono">Idle</span></span>
+          <span class="font-mono text-[11px] text-zinc-500">10-min TTL</span>
+        </div>
+      </div>
+
+      <!-- Right: Real-time API Response JSON Terminal -->
+      <div class="lg:col-span-6 terminal-window flex flex-col">
+        <div class="terminal-header">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+            <span class="text-xs font-mono text-zinc-400 ml-2">GET API Response (Live Payload)</span>
+          </div>
+          <button onclick="copySnippet('pg-json-viewer', this)" class="code-copy-btn">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span>Copy JSON</span>
+          </button>
+        </div>
+        <div class="p-4 flex-1 bg-[#090a0f] overflow-x-auto">
+          <pre id="pg-json-viewer" class="text-xs font-mono text-emerald-300 leading-relaxed">{\n  "status": "loading live challenge..."\n}</pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Developer Integration Recipes (cURL, Python, JS) ───────────────────── -->
+  <section class="space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <div class="text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider mb-1">
+          Instant Automation
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          AI Solver Code Recipes
+        </h2>
+        <p class="text-zinc-400 text-sm mt-1">Plug these drop-in functions directly into your model training or evaluation loop.</p>
+      </div>
+
+      <!-- Language Selector Tabs -->
+      <div class="flex items-center bg-[#12141c] p-1 rounded-xl border border-white/[0.08]">
+        <button id="tab-btn-curl" onclick="switchCodeTab('curl')" class="px-3.5 py-1.5 text-xs font-semibold text-emerald-400 border-b-2 border-emerald-400 transition-colors">
+          cURL
+        </button>
+        <button id="tab-btn-python" onclick="switchCodeTab('python')" class="px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors">
+          Python (Requests)
+        </button>
+        <button id="tab-btn-javascript" onclick="switchCodeTab('javascript')" class="px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors">
+          Node / JS
+        </button>
+      </div>
+    </div>
+
+    <!-- Terminal Code Box -->
+    <div class="terminal-window shadow-2xl">
+      
+      <!-- cURL Snippet Pane -->
+      <div id="snippet-curl" class="block">
+        <div class="terminal-header">
+          <span class="text-xs font-mono text-zinc-400">bash &bull; curl automated pipeline</span>
+          <button onclick="copySnippet('code-curl', this)" class="code-copy-btn">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span>Copy cURL</span>
+          </button>
+        </div>
+        <div class="p-4 bg-[#090a0f] overflow-x-auto">
+          <pre id="code-curl" class="text-xs font-mono text-zinc-300 leading-relaxed"><code><span class="text-zinc-500"># 1. Fetch Challenge</span>
+CHALLENGE=$(curl -s http://localhost:8000/api/captcha-digit)
+SESSION_ID=$(echo $CHALLENGE | jq -r '.session_id')
+
+<span class="text-zinc-500"># 2. Download Image (feed into your solver model)</span>
+curl -s http://localhost:8000/captcha-image/$SESSION_ID -o captcha.png
+
+<span class="text-zinc-500"># 3. Submit Predicted 6-Digit String & Receive Ground-Truth Signal</span>
+curl -X POST http://localhost:8000/api/verify-digit \
+  -H "Content-Type: application/json" \
+  -d "{\"session_id\": \"$SESSION_ID\", \"answer\": \"384729\"}"</code></pre>
+        </div>
+      </div>
+
+      <!-- Python Snippet Pane -->
+      <div id="snippet-python" class="hidden">
+        <div class="terminal-header">
+          <span class="text-xs font-mono text-zinc-400">python &bull; requests OCR benchmarking pipeline</span>
+          <button onclick="copySnippet('code-python', this)" class="code-copy-btn">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span>Copy Python</span>
+          </button>
+        </div>
+        <div class="p-4 bg-[#090a0f] overflow-x-auto">
+          <pre id="code-python" class="text-xs font-mono text-zinc-300 leading-relaxed"><code><span class="text-emerald-400">import</span> requests
+
+BASE_URL = <span class="text-amber-300">"http://localhost:8000"</span>
+
+<span class="text-zinc-500"># 1. Request new challenge from testbed</span>
+resp = requests.get(f"{BASE_URL}/api/captcha-digit").json()
+session_id = resp[<span class="text-amber-300">"session_id"</span>]
+image_bytes = requests.get(f"{BASE_URL}{resp['captcha_image_url']}").content
+
+<span class="text-zinc-500"># 2. Run your OCR/Vision Model (Replace with model prediction)</span>
+predicted_text = <span class="text-amber-300">"580608"</span>
+
+<span class="text-zinc-500"># 3. Submit and receive immediate training reward signal</span>
+verify_resp = requests.post(
+    f"{BASE_URL}/api/verify-digit",
+    json={<span class="text-amber-300">"session_id"</span>: session_id, <span class="text-amber-300">"answer"</span>: predicted_text}
+).json()
+
+print(<span class="text-amber-300">"Outcome:"</span>, verify_resp[<span class="text-amber-300">"success"</span>])
+print(<span class="text-amber-300">"Ground truth:"</span>, verify_resp[<span class="text-amber-300">"correct_answer"</span>])</code></pre>
+        </div>
+      </div>
+
+      <!-- JavaScript Snippet Pane -->
+      <div id="snippet-javascript" class="hidden">
+        <div class="terminal-header">
+          <span class="text-xs font-mono text-zinc-400">javascript &bull; browser / node fetch pipeline</span>
+          <button onclick="copySnippet('code-javascript', this)" class="code-copy-btn">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span>Copy JS</span>
+          </button>
+        </div>
+        <div class="p-4 bg-[#090a0f] overflow-x-auto">
+          <pre id="code-javascript" class="text-xs font-mono text-zinc-300 leading-relaxed"><code><span class="text-emerald-400">async function</span> benchmarkSolver() {
+  <span class="text-zinc-500">// 1. Fetch live 3x3 Grid Challenge</span>
+  <span class="text-emerald-400">const</span> res = <span class="text-emerald-400">await</span> fetch(<span class="text-amber-300">"http://localhost:8000/api/captcha-grid"</span>);
+  <span class="text-emerald-400">const</span> challenge = <span class="text-emerald-400">await</span> res.json();
+  console.log(<span class="text-amber-300">"Task:"</span>, challenge.instruction);
+
+  <span class="text-zinc-500">// 2. Submit AI Agent predicted tile indices</span>
+  <span class="text-emerald-400">const</span> verifyRes = <span class="text-emerald-400">await</span> fetch(<span class="text-amber-300">"http://localhost:8000/api/verify-grid"</span>, {
+    method: <span class="text-amber-300">"POST"</span>,
+    headers: { <span class="text-amber-300">"Content-Type"</span>: <span class="text-amber-300">"application/json"</span> },
+    body: JSON.stringify({
+      session_id: challenge.session_id,
+      selected_indices: [0, 3, 7]
+    })
+  });
+  <span class="text-emerald-400">const</span> result = <span class="text-emerald-400">await</span> verifyRes.json();
+  console.log(<span class="text-amber-300">"Result:"</span>, result);
+}</code></pre>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Benchmark Tracks Cards ────────────────────────────────────────────── -->
+  <section class="grid md:grid-cols-2 gap-6">
+
+    <!-- Track 1 Card -->
+    <div class="glass-panel p-8 flex flex-col justify-between group">
+      <div>
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400 group-hover:bg-emerald-500/20 group-hover:scale-105 transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+          </svg>
+        </div>
+        <div class="text-xs font-mono font-semibold text-emerald-400 uppercase tracking-wider mb-1">Track 01</div>
+        <h3 class="text-2xl font-bold text-white mb-3">6-Digit Distortion CAPTCHA</h3>
+        <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+          Emulates standard university portal and institutional banking logins. Distorted glyphs, random noise dots, and curved interference vectors.
+          Evaluates sequential character recognition, CRNNs, and Vision Transformer OCR models.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 pt-4 border-t border-white/[0.08]">
+        <a href="/login-digit" class="btn-emerald px-4 py-2.5 text-xs flex-1 text-center">
+          Interactive Form Test
+        </a>
+        <a href="/docs#/Digit%20CAPTCHA/fetch_digit_captcha_api_captcha_digit_get" target="_blank" class="btn-ghost px-4 py-2.5 text-xs rounded-lg flex-1 text-center">
+          API Endpoint ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Track 2 Card -->
+    <div class="glass-panel p-8 flex flex-col justify-between group">
+      <div>
+        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-6 text-amber-400 group-hover:bg-amber-500/20 group-hover:scale-105 transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+          </svg>
+        </div>
+        <div class="text-xs font-mono font-semibold text-amber-400 uppercase tracking-wider mb-1">Track 02</div>
+        <h3 class="text-2xl font-bold text-white mb-3">3&times;3 Image Selection Grid</h3>
+        <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+          Emulates Google reCAPTCHA v2 visual challenge semantics. Challenges agents to select all positive instances for a given category (bus, car, traffic light, bicycle).
+          Evaluates multi-label image classification, CLIP zero-shot embeddings, and object detection.
+        </p>
+      </div>
+      <div class="flex items-center gap-3 pt-4 border-t border-white/[0.08]">
+        <a href="/login-grid" class="btn-emerald px-4 py-2.5 text-xs flex-1 text-center">
+          Interactive Form Test
+        </a>
+        <a href="/docs#/Grid%20CAPTCHA/fetch_grid_captcha_api_captcha_grid_get" target="_blank" class="btn-ghost px-4 py-2.5 text-xs rounded-lg flex-1 text-center">
+          API Endpoint ↗
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── CTA Card ──────────────────────────────────────────────────────────── -->
+  <section class="glass-panel p-8 sm:p-12 text-center relative overflow-hidden">
+    <div class="max-w-2xl mx-auto space-y-4">
+      <h3 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+        Ready to benchmark your autonomous solver?
+      </h3>
+      <p class="text-zinc-400 text-sm">
+        Register an account or leverage the unauthenticated REST endpoints directly in your test harness.
       </p>
-      <div class="flex gap-3">
-        <a href="/login-digit"
-           class="flex-1 text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
-                  py-2 rounded-lg transition-colors">
-          Login with Digits
+      <div class="pt-4 flex flex-wrap justify-center gap-4">
+        <a href="/register" class="btn-emerald px-8 py-3 text-sm">
+          Create Test Account &rarr;
         </a>
-        <a href="/docs#/default/fetch_digit_captcha_api_captcha_digit_get" target="_blank"
-           class="flex-1 text-center border border-gray-600 hover:border-indigo-500 text-gray-300
-                  hover:text-white text-sm font-medium py-2 rounded-lg transition-colors">
-          API Docs ↗
+        <a href="/docs" target="_blank" class="btn-ghost px-6 py-3 text-sm rounded-xl font-medium">
+          Explore OpenAPI Docs
         </a>
       </div>
     </div>
-
-    <!-- Grid CAPTCHA card -->
-    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6 hover:border-indigo-600 transition-colors">
-      <div class="w-10 h-10 bg-indigo-700 rounded-xl flex items-center justify-center mb-4">
-        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-        </svg>
-      </div>
-      <h2 class="text-xl font-bold text-white mb-2">Image Selection CAPTCHA</h2>
-      <p class="text-gray-400 text-sm mb-4">
-        Real reCAPTCHA v2 style — "Select all images with a bus". Grid of 9 tiles from actual
-        reCAPTCHA datasets. Train object detection and image classification models.
-      </p>
-      <div class="flex gap-3">
-        <a href="/login-grid"
-           class="flex-1 text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
-                  py-2 rounded-lg transition-colors">
-          Login with Grid
-        </a>
-        <a href="/docs#/default/fetch_grid_captcha_api_captcha_grid_get" target="_blank"
-           class="flex-1 text-center border border-gray-600 hover:border-indigo-500 text-gray-300
-                  hover:text-white text-sm font-medium py-2 rounded-lg transition-colors">
-          API Docs ↗
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Agent flow diagram -->
-  <div class="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 mb-16">
-    <h2 class="text-lg font-bold text-white mb-4">AI Agent Benchmark Flow</h2>
-    <div class="flex flex-wrap items-center gap-2 text-sm">
-      <div class="bg-gray-700 rounded-lg px-3 py-2 text-gray-200 font-mono">GET /api/captcha-digit</div>
-      <span class="text-gray-500">→</span>
-      <div class="bg-gray-700 rounded-lg px-3 py-2 text-gray-200">Agent solves</div>
-      <span class="text-gray-500">→</span>
-      <div class="bg-gray-700 rounded-lg px-3 py-2 text-gray-200 font-mono">POST /api/verify-digit</div>
-      <span class="text-gray-500">→</span>
-      <div class="bg-green-900 border border-green-700 rounded-lg px-3 py-2 text-green-200 font-mono">
-        &#123;"success": true&#125;
-      </div>
-    </div>
-    <p class="text-gray-500 text-xs mt-3">
-      Full OpenAPI spec at <a href="/docs" class="text-indigo-400 hover:text-indigo-300">/docs</a>.
-      Returns <code class="bg-gray-700 px-1 rounded">correct_answer</code> /
-      <code class="bg-gray-700 px-1 rounded">correct_indices</code> on every response for training signal.
-    </p>
-  </div>
-
-  <!-- Register CTA -->
-  <div class="text-center">
-    <p class="text-gray-400 mb-4">Create an account to test the full login flow</p>
-    <a href="/register"
-       class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
-              px-8 py-3 rounded-xl transition-colors text-sm">
-      Register &rarr;
-    </a>
-  </div>
+  </section>
 
 </div>
 {% endblock %}

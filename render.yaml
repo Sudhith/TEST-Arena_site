@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: captcha-solver-testbed
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: RATE_LIMIT
+        value: 30/minute
+      # Optional: To persist user accounts permanently across restarts,
+      # add a free Postgres connection string:
+      # - key: DATABASE_URL
+      #   value: postgresql://...

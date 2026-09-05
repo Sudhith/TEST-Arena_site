@@ -1,91 +1,134 @@
 {% extends "base.html" %}
-{% block title %}Dashboard — TEST ARENA{% endblock %}
+
+{% block title %}Dashboard — TEST ARENA Benchmark Console{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 py-12">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-8">
 
-  <!-- Welcome -->
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-white mb-1">
-      Welcome, <span class="text-indigo-400">{{ current_user.username }}</span> 👋
-    </h1>
-    <p class="text-gray-400">You've successfully passed the CAPTCHA. Here's your research dashboard.</p>
+  <!-- Welcome Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+    <div>
+      <div class="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider mb-1 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Active Authenticated Session
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">
+        Welcome, <span class="text-emerald-400 font-mono">{{ current_user.username }}</span>
+      </h1>
+      <p class="text-zinc-400 text-sm mt-1">CAPTCHA verification successful. You are now inside the protected workbench.</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="/logout" class="px-4 py-2 text-xs font-semibold rounded-xl text-rose-300 hover:text-white bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 transition-all">
+        Sign Out
+      </a>
+    </div>
   </div>
 
-  <!-- Ephemeral DB notice -->
-  <div class="bg-amber-900/40 border border-amber-700 rounded-xl px-5 py-4 mb-8 flex gap-3">
-    <svg class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-    </svg>
-    <div>
-      <p class="text-amber-300 text-sm font-medium">Research Testbed Notice</p>
-      <p class="text-amber-200/70 text-xs mt-0.5">
-        User accounts are <strong>not persisted</strong> across server restarts on the free-hosted version
-        (SQLite is ephemeral on Render). This is by design for a research testbed.
-        To persist accounts, set <code class="bg-amber-900 px-1 rounded">DATABASE_URL</code> to a Postgres URL.
+  <!-- Ephemeral Database Notice (Neon Amber) -->
+  <div class="glass-panel p-5 border-amber-500/30 bg-amber-950/20 flex items-start gap-4">
+    <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center flex-shrink-0 text-amber-400 mt-0.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+    </div>
+    <div class="text-xs space-y-1">
+      <div class="font-bold text-amber-300 text-sm">Research Testbed Instance Notice</div>
+      <p class="text-amber-200/80 leading-relaxed">
+        Local SQLite storage is ephemeral on container restarts (standard on Render free tier). 
+        To persist user accounts and historical benchmarks permanently across deployments, set the 
+        <code class="px-1.5 py-0.5 bg-black/40 text-amber-300 rounded font-mono">DATABASE_URL</code> 
+        environment variable to an external PostgreSQL instance (e.g. Neon or Supabase free tier).
       </p>
     </div>
   </div>
 
-  <!-- Quick links grid -->
-  <div class="grid md:grid-cols-3 gap-4 mb-8">
+  <!-- Telemetry & Action Cards Grid -->
+  <div class="grid md:grid-cols-3 gap-5">
 
-    <a href="/docs" target="_blank"
-       class="bg-gray-800 border border-gray-700 hover:border-indigo-500 rounded-xl p-5 transition-colors group">
-      <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center mb-3">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+    <!-- Card 1: Swagger Docs -->
+    <a href="/docs" target="_blank" class="glass-panel p-6 group hover:border-emerald-500/40">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
       </div>
-      <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm">API Docs</h3>
-      <p class="text-gray-500 text-xs mt-1">OpenAPI spec for all 7 endpoints</p>
+      <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">Interactive API Docs</h3>
+      <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed">Explore OpenAPI 3.0 schemas, test requests directly via Swagger UI.</p>
+      <div class="mt-4 text-xs font-semibold text-emerald-400 flex items-center gap-1">
+        <span>Launch Swagger</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      </div>
     </a>
 
-    <a href="/api/captcha-digit" target="_blank"
-       class="bg-gray-800 border border-gray-700 hover:border-indigo-500 rounded-xl p-5 transition-colors group">
-      <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center mb-3">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Card 2: Digit Endpoint -->
+    <a href="/api/captcha-digit" target="_blank" class="glass-panel p-6 group hover:border-emerald-500/40">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
         </svg>
       </div>
-      <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm">Fetch Digit CAPTCHA</h3>
-      <p class="text-gray-500 text-xs mt-1">GET /api/captcha-digit</p>
+      <h3 class="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">Digit CAPTCHA API</h3>
+      <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed font-mono">GET /api/captcha-digit</p>
+      <div class="mt-4 text-xs font-semibold text-emerald-400 flex items-center gap-1">
+        <span>Fetch Sample JSON</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </div>
     </a>
 
-    <a href="/api/captcha-grid" target="_blank"
-       class="bg-gray-800 border border-gray-700 hover:border-indigo-500 rounded-xl p-5 transition-colors group">
-      <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center mb-3">
-        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+    <!-- Card 3: Grid Endpoint -->
+    <a href="/api/captcha-grid" target="_blank" class="glass-panel p-6 group hover:border-amber-500/40">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 group-hover:scale-105 group-hover:bg-amber-500/20 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
         </svg>
       </div>
-      <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm">Fetch Grid CAPTCHA</h3>
-      <p class="text-gray-500 text-xs mt-1">GET /api/captcha-grid</p>
+      <h3 class="text-base font-bold text-white group-hover:text-amber-400 transition-colors">Grid CAPTCHA API</h3>
+      <p class="text-xs text-zinc-400 mt-1.5 leading-relaxed font-mono">GET /api/captcha-grid</p>
+      <div class="mt-4 text-xs font-semibold text-amber-400 flex items-center gap-1">
+        <span>Fetch Sample JSON</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </div>
     </a>
 
   </div>
 
-  <!-- API cheat sheet -->
-  <div class="bg-gray-800 border border-gray-700 rounded-xl p-6">
-    <h2 class="font-bold text-white mb-4 text-sm">Agent Integration Quick Reference</h2>
-    <pre class="text-xs text-gray-300 overflow-x-auto leading-relaxed"><code># 1. Fetch a digit CAPTCHA
-curl http://localhost:8000/api/captcha-digit
+  <!-- Agent Integration Terminal Cheat Sheet -->
+  <div class="terminal-window shadow-2xl">
+    <div class="terminal-header">
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+        <span class="text-xs font-mono text-zinc-400 ml-2">Benchmark Harness Quick Reference (CLI)</span>
+      </div>
+      <button onclick="copySnippet('dash-code-block', this)" class="code-copy-btn">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+        </svg>
+        <span>Copy Commands</span>
+      </button>
+    </div>
+    <div class="p-5 bg-[#090a0f] overflow-x-auto">
+      <pre id="dash-code-block" class="text-xs font-mono text-zinc-300 leading-relaxed"><code><span class="text-zinc-500"># ── Digit CAPTCHA Pipeline ──────────────────────────────────────</span>
+<span class="text-zinc-500"># 1. Fetch Challenge</span>
+curl -s http://localhost:8000/api/captcha-digit
 
-# 2. Verify your answer
-curl -X POST http://localhost:8000/api/verify-digit \
+<span class="text-zinc-500"># 2. Verify answer with Ground Truth Returned</span>
+curl -s -X POST http://localhost:8000/api/verify-digit \
   -H "Content-Type: application/json" \
-  -d '{"session_id": "...", "answer": "384729"}'
+  -d '{"session_id": "&lt;SESSION_ID&gt;", "answer": "580608"}'
 
-# 3. Fetch a grid CAPTCHA
-curl http://localhost:8000/api/captcha-grid
+<span class="text-zinc-500"># ── Grid Selection Pipeline ─────────────────────────────────────</span>
+<span class="text-zinc-500"># 1. Fetch Challenge</span>
+curl -s http://localhost:8000/api/captcha-grid
 
-# 4. Verify selected tile indices
-curl -X POST http://localhost:8000/api/verify-grid \
+<span class="text-zinc-500"># 2. Verify Selected Tile Indices</span>
+curl -s -X POST http://localhost:8000/api/verify-grid \
   -H "Content-Type: application/json" \
-  -d '{"session_id": "...", "selected_indices": [0, 3, 7]}'</code></pre>
+  -d '{"session_id": "&lt;SESSION_ID&gt;", "selected_indices": [0, 3, 7]}'</code></pre>
+    </div>
   </div>
 
 </div>
