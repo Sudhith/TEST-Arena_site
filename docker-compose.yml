@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  testbed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: captcha_testbed
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=change-this-in-production-to-a-secure-secret-token
+      - ENVIRONMENT=production
+      - RATE_LIMIT=30/minute
+      # For durable accounts across restarts, point to external Postgres:
+      # - DATABASE_URL=postgresql://user:pass@ep-xyz.neon.tech/captchadb
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
