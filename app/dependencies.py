@@ -19,6 +19,7 @@ __all__ = [
     "require_login",
     "flash",
     "get_flashed",
+    "get_real_client_ip",
 ]
 
 
@@ -30,9 +31,37 @@ def require_login(user: User = Depends(get_current_user)) -> User:
     return user
 
 
+def get_real_client_ip(request: Request) -> str:
+    """
+    Extract the real client IP address from reverse proxy headers
+    (Render, Cloudflare, AWS, Nginx).
+    
+    CRITICAL SECURITY & RATE LIMITING DEFENSE:
+    Behind reverse proxies, request.client.host returns the proxy's internal
+    IP address. Without this resolution, all users on the internet share
+    a single rate limit bucket.
+    """
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        # X-Forwarded-For: <client>, <proxy1>, <proxy2>
+        return forwarded.split(",")[0].strip()
+
+    cf_ip = request.headers.get("cf-connecting-ip")
+    if cf_ip:
+        return cf_ip.strip()
+
+    real_ip = request.headers.get("x-real-ip")
+    if real_ip:
+        return real_ip.strip()
+
+    if request.client:
+        return request.client.host
+    return "127.0.0.1"
+
+
 # ── Flash messages (lightweight, cookie-free) ─────────────────────────────────
 # We store flash messages in request.state so they're available within
-# the same request/redirect cycle.  The template reads them via get_flashed().
+# the same request/redirect cycle. The template reads them via get_flashed().
 
 def flash(request: Request, message: str, category: str = "error") -> None:
     """Attach a flash message to the current request state."""

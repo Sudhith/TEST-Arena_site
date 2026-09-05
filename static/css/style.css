@@ -37,6 +37,20 @@ code, pre, .font-mono, input[name="captcha_answer"], .digit-font {
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* ── Zero-Blue Defensive Rules: Focus Rings & WebKit Autofill ─────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-emerald) !important;
+  outline-offset: 2px !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px #0d0f15 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* ── Ambient Background Mesh & Grid ──────────────────────────────────────── */
 .cyber-grid-bg {
   background-image: 
@@ -311,4 +325,25 @@ code, pre, .font-mono, input[name="captcha_answer"], .digit-font {
 .toast.toast-show {
   transform: translateY(0);
   opacity: 1;
+}
+
+.toast.toast-error {
+  border-color: var(--accent-rose) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(244, 63, 94, 0.3) !important;
+}
+
+.tile-idx-badge {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(9, 10, 15, 0.85);
+  color: #a1a1aa;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  pointer-events: none;
+  z-index: 5;
 }

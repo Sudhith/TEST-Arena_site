@@ -84,9 +84,10 @@
           >
             {% for url in image_urls %}
             <div
-              class="grid-tile"
+              class="grid-tile relative"
               data-index="{{ loop.index0 }}"
             >
+              <span class="tile-idx-badge font-mono">{{ loop.index0 }}</span>
               <!-- Tile Image (Opaque URL) -->
               <img
                 src="{{ url }}"

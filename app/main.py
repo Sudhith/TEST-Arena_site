@@ -31,13 +31,13 @@ from typing import Optional
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
+from slowapi.middleware import SlowAPIMiddleware
 from sqlmodel import Session
 
 from app.auth import (
@@ -50,12 +50,12 @@ from app.captcha_digit import create_digit_session, get_png_for_session, verify_
 from app.captcha_grid import _load_index, create_grid_session, get_tile_path, verify_grid
 from app.config import get_settings
 from app.db import create_db_and_tables, get_session
-from app.dependencies import flash, get_flashed, get_optional_user, require_login
+from app.dependencies import flash, get_flashed, get_optional_user, get_real_client_ip, require_login
 
 settings = get_settings()
 
-# ── Rate limiter ──────────────────────────────────────────────────────────────
-limiter = Limiter(key_func=get_remote_address, default_limits=[settings.rate_limit])
+# ── Rate limiter (uses real client IP behind reverse proxies) ──────────────────
+limiter = Limiter(key_func=get_real_client_ip, default_limits=[settings.rate_limit])
 
 # ── App init ──────────────────────────────────────────────────────────────────
 app = FastAPI(
@@ -74,6 +74,7 @@ app = FastAPI(
 # Attach slowapi rate limiter
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 # Security headers on every response
 @app.middleware("http")
@@ -82,6 +83,8 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
     if settings.environment == "production":
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
@@ -147,6 +150,7 @@ def register_page(request: Request, db: Session = Depends(get_session)):
 
 
 @app.post("/register", response_class=HTMLResponse)
+@limiter.limit("10/minute")
 def register_submit(
     request: Request,
     username: str = Form(...),
@@ -184,6 +188,7 @@ def login_digit_page(request: Request, db: Session = Depends(get_session)):
 
 
 @app.post("/login-digit", response_class=HTMLResponse)
+@limiter.limit("15/minute")
 def login_digit_submit(
     request: Request,
     response: Response,
@@ -222,8 +227,13 @@ def login_digit_submit(
 
 @app.get("/login-grid", response_class=HTMLResponse)
 def login_grid_page(request: Request, db: Session = Depends(get_session)):
-    cs = create_grid_session(db)
     import json
+    try:
+        cs = create_grid_session(db)
+    except ValueError as err:
+        flash(request, str(err))
+        return _render(request, "error.html", db, status_code=503, title="Dataset Unavailable", detail=str(err))
+
     payload = json.loads(cs.captcha_answer)
     image_urls = [
         f"/captcha-image/{cs.id}/{i}"
@@ -238,6 +248,7 @@ def login_grid_page(request: Request, db: Session = Depends(get_session)):
 
 
 @app.post("/login-grid", response_class=HTMLResponse)
+@limiter.limit("15/minute")
 async def login_grid_submit(
     request: Request,
     response: Response,
@@ -306,7 +317,8 @@ def logout():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.get("/captcha-image/{session_id}", include_in_schema=False)
-def stream_digit_image(session_id: str, db: Session = Depends(get_session)):
+@limiter.limit("60/minute")
+def stream_digit_image(request: Request, session_id: str, db: Session = Depends(get_session)):
     """
     Stream the digit CAPTCHA PNG for the given session.
     The URL contains only the opaque session_id — no answer, no text.
@@ -319,7 +331,8 @@ def stream_digit_image(session_id: str, db: Session = Depends(get_session)):
 
 
 @app.get("/captcha-image/{session_id}/{tile_index}", include_in_schema=False)
-def stream_grid_tile(session_id: str, tile_index: int,
+@limiter.limit("180/minute")
+def stream_grid_tile(request: Request, session_id: str, tile_index: int,
                      db: Session = Depends(get_session)):
     """
     Stream a grid CAPTCHA tile image.
@@ -329,14 +342,9 @@ def stream_grid_tile(session_id: str, tile_index: int,
     if path is None:
         raise HTTPException(status_code=404, detail="Tile not found or session expired.")
 
-    def _iter():
-        with open(path, "rb") as f:
-            yield from iter(lambda: f.read(65536), b"")
-
     suffix = path.suffix.lower()
     media_type = "image/jpeg" if suffix in (".jpg", ".jpeg") else "image/png"
-    return StreamingResponse(_iter(), media_type=media_type,
-                             headers={"Cache-Control": "no-store"})
+    return FileResponse(path, media_type=media_type, headers={"Cache-Control": "no-store"})
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -346,13 +354,13 @@ def stream_grid_tile(session_id: str, tile_index: int,
 # ── Pydantic request/response models ──────────────────────────────────────────
 
 class DigitVerifyRequest(BaseModel):
-    session_id: str
-    answer: str
+    session_id: str = Field(..., min_length=32, max_length=64, description="Challenge session UUID")
+    answer: str = Field(..., min_length=1, max_length=16, description="Predicted 6-digit string")
 
 
 class GridVerifyRequest(BaseModel):
-    session_id: str
-    selected_indices: list[int]
+    session_id: str = Field(..., min_length=32, max_length=64, description="Challenge session UUID")
+    selected_indices: list[int] = Field(..., max_length=9, description="List of chosen tile indices (0-8)")
 
 
 # ── Digit CAPTCHA API ─────────────────────────────────────────────────────────

@@ -88,8 +88,12 @@
     grid.innerHTML = "";
     imageUrls.forEach(function (url, idx) {
       const tile = document.createElement("div");
-      tile.className = "grid-tile";
+      tile.className = "grid-tile relative";
       tile.dataset.index = idx;
+
+      const badge = document.createElement("span");
+      badge.className = "tile-idx-badge font-mono";
+      badge.textContent = idx;
 
       const img = document.createElement("img");
       img.src = url + "?t=" + Date.now();
@@ -112,10 +116,12 @@
       checkbox.id = "tile-check-" + idx;
       checkbox.className = "hidden";
 
+      tile.appendChild(badge);
       tile.appendChild(img);
       tile.appendChild(icon);
       tile.appendChild(checkbox);
       grid.appendChild(tile);
     });
   }
+
 })();

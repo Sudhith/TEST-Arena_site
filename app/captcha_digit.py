@@ -11,6 +11,7 @@ The generated PNG is never served at a URL that reveals the answer;
 the route /captcha-image/{session_id} streams bytes server-side.
 """
 
+import hmac
 import io
 import secrets
 import sys
@@ -65,28 +66,25 @@ def generate_digit_captcha() -> tuple[bytes, str]:
 
 def create_digit_session(db: Session, user_id: Optional[int] = None) -> CaptchaSession:
     """
-    Generate a new digit CAPTCHA, persist it, and return the session row.
-    Purges expired sessions first to keep the table lean.
+    Generate a new digit CAPTCHA challenge session.
+    Image rendering is deferred to get_png_for_session for optimal CPU performance.
     """
     purge_expired_sessions(db)
 
-    png_bytes, text = generate_digit_captcha()
+    # 6-digit random string with cryptographically secure RNG
+    text = f"{secrets.randbelow(1_000_000):06d}"
     expires_at = datetime.now(timezone.utc) + timedelta(
         seconds=settings.captcha_ttl_seconds
     )
     captcha_session = CaptchaSession(
         user_id=user_id,
         captcha_type="digit",
-        captcha_answer=text,                # plain text — stored server-side only
+        captcha_answer=text,
         expires_at=expires_at,
     )
     db.add(captcha_session)
     db.commit()
     db.refresh(captcha_session)
-
-    # Attach PNG bytes to the in-memory object so the caller can stream them
-    # without a second DB hit.  This attribute is NOT persisted.
-    captcha_session.__dict__["_png_bytes"] = png_bytes  # type: ignore[assignment]
     return captcha_session
 
 
@@ -143,7 +141,7 @@ def verify_digit(session_id: str, answer: str, db: Session) -> dict:
         return {"success": False, "correct_answer": None, "error": "Session expired."}
 
     correct = captcha_session.captcha_answer
-    success = answer.strip() == correct
+    success = hmac.compare_digest(answer.strip(), correct)
 
     # Always delete after one attempt (prevents brute-force replay)
     db.delete(captcha_session)

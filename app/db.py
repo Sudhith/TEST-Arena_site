@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, create_engine, delete, select
 
 from app.config import get_settings
 
@@ -87,15 +87,12 @@ def get_session():
 
 def purge_expired_sessions(db: Session) -> int:
     """
-    Delete all CaptchaSession rows whose expires_at is in the past.
+    Atomic bulk deletion of expired sessions.
     Called lazily before creating a new session to keep the table lean.
     Returns the number of rows deleted.
     """
     now = datetime.now(timezone.utc)
-    expired = db.exec(
-        select(CaptchaSession).where(CaptchaSession.expires_at < now)
-    ).all()
-    for row in expired:
-        db.delete(row)
+    stmt = delete(CaptchaSession).where(CaptchaSession.expires_at < now)
+    result = db.exec(stmt)
     db.commit()
-    return len(expired)
+    return result.rowcount if hasattr(result, "rowcount") else 0

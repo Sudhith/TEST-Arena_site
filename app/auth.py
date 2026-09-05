@@ -9,17 +9,23 @@ so they can't be forged, and they expire after settings.session_ttl_seconds.
 """
 
 from datetime import datetime, timezone
+import re
 from typing import Optional
 
 from fastapi import Depends, HTTPException, Request, Response, status
 import bcrypt
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from app.config import get_settings
 from app.db import User, get_session
 
 settings = get_settings()
+
+# Constant-time dummy hash to mitigate username-enumeration timing attacks
+_DUMMY_BCRYPT_HASH = "$2b$12$Ry9rDuvf0FoozIoOsiiJ2.orFqqWxCANnC6dUBruPR7y76xFVz85O"
+_USERNAME_RE = re.compile(r"^[a-zA-Z0-9_-]{3,32}$")
 
 # ── Password hashing ──────────────────────────────────────────────────────────
 
@@ -114,27 +120,43 @@ def get_optional_user(
 
 def register_user(username: str, password: str, db: Session) -> User:
     """
-    Create a new user.
-    Raises ValueError if the username is already taken.
+    Create a new user with input sanitization and duplicate handling.
+    Raises ValueError if validation fails or username is taken.
     """
+    username = username.strip()
+    if not _USERNAME_RE.match(username):
+        raise ValueError("Username must be 3-32 characters (letters, numbers, _, -).")
+    if len(password) < 6:
+        raise ValueError("Password must be at least 6 characters.")
+    if len(password.encode("utf-8")) > 72:
+        raise ValueError("Password cannot exceed 72 bytes.")
+
     existing = db.exec(select(User).where(User.username == username)).first()
     if existing:
         raise ValueError(f"Username '{username}' is already taken.")
+
     user = User(username=username, password_hash=hash_password(password))
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    try:
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    except IntegrityError:
+        db.rollback()
+        raise ValueError(f"Username '{username}' is already taken.")
     return user
 
 
 def authenticate_user(username: str, password: str, db: Session) -> Optional[User]:
     """
-    Verify credentials.
+    Verify credentials with timing-attack defense.
     Returns the User on success, None on failure.
     """
-    user = db.exec(select(User).where(User.username == username)).first()
+    user = db.exec(select(User).where(User.username == username.strip())).first()
     if user is None:
+        # Constant-time dummy computation prevents username enumeration via response timing
+        verify_password(password, _DUMMY_BCRYPT_HASH)
         return None
     if not verify_password(password, user.password_hash):
         return None
     return user
+

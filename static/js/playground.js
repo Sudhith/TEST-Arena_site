@@ -1,7 +1,7 @@
 /**
  * static/js/playground.js
  * Interactive Live Solver Playground & Code Snippet Copy System
- * Zero-blue color scheme, emerald toast feedback.
+ * Zero-blue color scheme, emerald/amber toast feedback.
  */
 
 (function () {
@@ -17,34 +17,32 @@
     }
 
     const toast = document.createElement("div");
-    toast.className = "toast";
+    toast.className = type === "error" ? "toast toast-error" : "toast";
     
     // Icon
     const iconSvg = type === "success" 
       ? '<svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>'
-      : '<svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+      : '<svg class="w-4 h-4 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
 
     toast.innerHTML = `${iconSvg}<span>${message}</span>`;
     container.appendChild(toast);
 
-    // Trigger animation
     requestAnimationFrame(() => toast.classList.add("toast-show"));
 
-    // Remove after 2.8s
     setTimeout(() => {
       toast.classList.remove("toast-show");
       setTimeout(() => toast.remove(), 300);
     }, 2800);
   };
 
-  // ── Copy Code Snippet System ───────────────────────────────────────────────
+  // ── Robust Copy Code Snippet System (with non-HTTPS fallback) ───────────────
   window.copySnippet = function (targetId, btnElement) {
     const codeBlock = document.getElementById(targetId);
     if (!codeBlock) return;
 
     const text = codeBlock.innerText.trim();
-    navigator.clipboard.writeText(text).then(() => {
-      // Visual button feedback
+
+    function onCopySuccess() {
       if (btnElement) {
         const originalHtml = btnElement.innerHTML;
         btnElement.innerHTML = `
@@ -58,10 +56,31 @@
         }, 2000);
       }
       showToast("Snippet copied to clipboard!");
-    }).catch(err => {
-      console.error("Clipboard copy failed:", err);
-      showToast("Could not copy snippet", "error");
-    });
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(onCopySuccess).catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
+
+    function fallbackCopy() {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        onCopySuccess();
+      } catch (err) {
+        console.error("Fallback copy failed:", err);
+        showToast("Could not copy snippet", "error");
+      }
+    }
   };
 
   // ── Multi-Language Tab Switcher ────────────────────────────────────────────
@@ -71,17 +90,13 @@
       const pane = document.getElementById(`snippet-${t}`);
       const btn = document.getElementById(`tab-btn-${t}`);
       if (pane) {
-        if (t === lang) {
-          pane.classList.remove("hidden");
-        } else {
-          pane.classList.add("hidden");
-        }
+        pane.classList.toggle("hidden", t !== lang);
       }
       if (btn) {
         if (t === lang) {
-          btn.className = "px-3 py-1.5 text-xs font-semibold text-emerald-400 border-b-2 border-emerald-400 transition-colors";
+          btn.className = "px-3.5 py-1.5 text-xs font-semibold text-emerald-400 border-b-2 border-emerald-400 transition-colors";
         } else {
-          btn.className = "px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors";
+          btn.className = "px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-200 transition-colors";
         }
       }
     });
@@ -165,7 +180,8 @@
           <img src="${data.captcha_image_url}?t=${Date.now()}" alt="Live Digit CAPTCHA" width="280" height="90" class="rounded">
         </div>
         <div class="flex gap-2 w-full max-w-xs">
-          <input type="text" id="pg-digit-input" maxlength="6" placeholder="Solve or simulate" 
+          <input type="text" id="pg-digit-input" maxlength="6" placeholder="Type 6 digits & hit Enter" 
+            onkeydown="if(event.key==='Enter') simulateDigitSolve()"
             class="flex-1 bg-zinc-900/80 border border-zinc-700 text-white rounded-lg px-3 py-2 text-center font-mono tracking-widest text-sm focus:outline-none focus:border-emerald-500">
           <button onclick="simulateDigitSolve()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1">
             ⚡ Solve
@@ -174,12 +190,17 @@
         <div id="pg-solve-result" class="text-xs text-zinc-400 text-center min-h-[1.5rem]"></div>
       </div>
     `;
+    setTimeout(() => {
+      const input = document.getElementById("pg-digit-input");
+      if (input) input.focus();
+    }, 100);
   }
 
   function renderGridPlayground(data) {
     const displayArea = document.getElementById("pg-display-area");
     let tilesHtml = data.image_urls.map((url, idx) => `
       <div class="grid-tile relative" data-idx="${idx}" onclick="togglePlaygroundTile(this)">
+        <span class="tile-idx-badge font-mono">${idx}</span>
         <img src="${url}?t=${Date.now()}" alt="Tile ${idx}">
         <div class="tile-check-icon hidden">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,7 +218,7 @@
             ${data.instruction}
           </span>
           <button onclick="simulateGridSolve()" class="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-zinc-950 border border-emerald-500/40 rounded text-xs font-semibold transition-all flex items-center gap-1">
-            ⚡ Auto-Solve AI
+            ⚡ Verify Selection
           </button>
         </div>
         <div class="grid grid-cols-3 gap-1.5 max-w-[280px] mx-auto">
@@ -239,7 +260,7 @@
         resultEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Solved Correctly!</span> Ground truth: <code class="text-white">${data.correct_answer}</code>`;
         showToast("AI Agent: Challenge Solved Correctly!");
       } else {
-        resultEl.innerHTML = `<span class="text-amber-400 font-semibold">✗ Incorrect Answer.</span> Ground truth answer was: <code class="text-emerald-300 font-mono font-bold">${data.correct_answer}</code>`;
+        resultEl.innerHTML = `<span class="text-amber-400 font-semibold">✗ Incorrect Answer.</span> Ground truth was: <code class="text-emerald-300 font-mono font-bold">${data.correct_answer || "N/A"}</code>`;
       }
     } catch (err) {
       if (resultEl) resultEl.innerHTML = `<span class="text-rose-400">Error: ${err.message}</span>`;
@@ -272,7 +293,7 @@
         resultEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ 100% Tile Match!</span> Correct indices: [${data.correct_indices.join(", ")}]`;
         showToast("AI Agent: Grid Challenge Solved!");
       } else {
-        resultEl.innerHTML = `<span class="text-amber-400 font-semibold">Mismatch.</span> True positive tiles were: <code class="text-emerald-300 font-mono font-bold">[${data.correct_indices.join(", ")}]</code>`;
+        resultEl.innerHTML = `<span class="text-amber-400 font-semibold">Mismatch.</span> True positive tiles: <code class="text-emerald-300 font-mono font-bold">[${(data.correct_indices || []).join(", ")}]</code>`;
       }
     } catch (err) {
       if (resultEl) resultEl.innerHTML = `<span class="text-rose-400">Error: ${err.message}</span>`;
@@ -281,8 +302,19 @@
 
   // Auto-init on page load if playground element exists
   document.addEventListener("DOMContentLoaded", () => {
+    // Dynamically adapt localhost:8000 in code snippets to actual origin if deployed remotely
+    if (window.location.origin && !window.location.origin.includes("localhost") && !window.location.origin.includes("127.0.0.1")) {
+      ["code-curl", "code-python", "code-javascript"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.innerHTML = el.innerHTML.replaceAll("http://localhost:8000", window.location.origin);
+        }
+      });
+    }
+
     if (document.getElementById("pg-display-area")) {
       fetchLiveChallenge();
     }
   });
 })();
+

@@ -36,11 +36,12 @@ settings = get_settings()
 
 _index: list[dict] = []
 _by_category: dict[str, list[dict]] = {}
+_neg_by_category: dict[str, list[dict]] = {}
 
 
 def _load_index() -> None:
-    """Load data/index.json into memory. Called once at app startup."""
-    global _index, _by_category
+    """Load data/index.json into memory and precompute category sets."""
+    global _index, _by_category, _neg_by_category
 
     index_path: Path = settings.index_path
     if not index_path.exists():
@@ -50,6 +51,7 @@ def _load_index() -> None:
         )
         _index = []
         _by_category = {}
+        _neg_by_category = {}
         return
 
     _index = json.loads(index_path.read_text())
@@ -58,6 +60,11 @@ def _load_index() -> None:
     for item in _index:
         for cat in item.get("categories", []):
             _by_category.setdefault(cat, []).append(item)
+
+    _neg_by_category = {
+        cat: [item for item in _index if cat not in item.get("categories", [])]
+        for cat in settings.grid_categories
+    }
 
     total = len(_index)
     counts = {cat: len(imgs) for cat, imgs in _by_category.items()}
@@ -112,8 +119,8 @@ def generate_grid_captcha(target_category: Optional[str] = None) -> dict:
         target_category = random.choice(available)
 
     positives = _by_category.get(target_category, [])
-    # Negatives: images that do NOT contain the target category
-    negatives = [
+    # O(1) precomputed negatives lookup with fallback
+    negatives = _neg_by_category.get(target_category) or [
         item for item in _index
         if target_category not in item.get("categories", [])
     ]
@@ -211,9 +218,13 @@ def get_tile_path(session_id: str, tile_index: int, db: Session) -> Optional[Pat
     if tile_index < 0 or tile_index >= len(tiles):
         return None
 
-    # path is relative to data/ dir
+    # Path is relative to data/ dir — enforce strict directory containment
     rel_path = tiles[tile_index]["path"]
-    abs_path = settings.data_dir / rel_path
+    abs_path = (settings.data_dir / rel_path).resolve()
+    try:
+        abs_path.relative_to(settings.data_dir.resolve())
+    except ValueError:
+        return None
     return abs_path if abs_path.exists() else None
 
 
