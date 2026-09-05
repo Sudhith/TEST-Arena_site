@@ -1,0 +1,242 @@
+[
+  {
+    "path": "images/bus/starter_00.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_01.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_02.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_03.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_04.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_05.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_06.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_07.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_08.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/bus/starter_09.jpg",
+    "categories": [
+      "bus"
+    ]
+  },
+  {
+    "path": "images/car/starter_00.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_01.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_02.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_03.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_04.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_05.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_06.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_07.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_08.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/car/starter_09.jpg",
+    "categories": [
+      "car"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_00.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_01.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_02.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_03.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_04.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_05.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_06.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_07.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_08.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/traffic_light/starter_09.jpg",
+    "categories": [
+      "traffic_light"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_00.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_01.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_02.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_03.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_04.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_05.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_06.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_07.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_08.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  },
+  {
+    "path": "images/bicycle/starter_09.jpg",
+    "categories": [
+      "bicycle"
+    ]
+  }
+]

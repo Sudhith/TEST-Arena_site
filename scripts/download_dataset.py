@@ -40,6 +40,12 @@ import os
 import sys
 from pathlib import Path
 
+# Force utf-8 encoding on standard output for Windows cp1252 consoles
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 # ── Paths (project root is one level above scripts/) ─────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
@@ -53,7 +59,7 @@ GRID_LIMIT  = int(os.environ.get("GRID_LIMIT", 500))
 # Grid CAPTCHA categories we care about (must match config.py grid_categories)
 GRID_CATEGORIES = ["bus", "car", "traffic_light", "bicycle"]
 
-# Mapping from dataset label → our folder name
+# Mapping from dataset label -> our folder name
 LABEL_MAP = {
     "bus":           "bus",
     "car":           "car",
@@ -65,7 +71,7 @@ LABEL_MAP = {
 
 
 def banner(msg: str) -> None:
-    print(f"\n{'─'*60}\n  {msg}\n{'─'*60}")
+    print(f"\n{'-'*60}\n  {msg}\n{'-'*60}")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -111,7 +117,7 @@ def download_digit_dataset() -> None:
         total_saved += count
         print(f"  [{split_name}] saved {count} images → {out_dir.relative_to(ROOT)}")
 
-    print(f"\n✅ Digit dataset done. Total: {total_saved} images")
+    print(f"\n[OK] Digit dataset done. Total: {total_saved} images")
     print("   Label is encoded in the filename, e.g. '384729_000001.png'")
     print("   Use data/digit_samples/ to train your OCR/CRNN solver agent.\n")
 
@@ -170,18 +176,18 @@ def download_grid_dataset() -> None:
         print("  Run scripts/build_index.py to check what's in data/images/")
         _ensure_fallback_images()
     else:
-        print(f"\n✅ Grid dataset done. {total} real reCAPTCHA tiles saved.")
+        print(f"\n[OK] Grid dataset done. {total} real reCAPTCHA tiles saved.")
         _rebuild_index(counts)
 
 
 def _ensure_fallback_images() -> None:
     """
-    If the HuggingFace download fails entirely, create tiny placeholder
-    images so the site still starts without crashing.  The dev can replace
+    If the HuggingFace download fails entirely, create sample
+    images so the site still starts without crashing. The dev can replace
     these later with the real dataset or use Wikimedia Commons manually.
     """
     from PIL import Image, ImageDraw
-    print("\n  Creating placeholder images (10 per category)…")
+    print("\n  Creating starter images (10 per category)...")
     for cat in GRID_CATEGORIES:
         out_dir = IMAGES_DIR / cat
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -190,11 +196,11 @@ def _ensure_fallback_images() -> None:
             print(f"    {cat}: already has {len(existing)} images, skipping")
             continue
         for i in range(10):
-            img = Image.new("RGB", (150, 150), color=(30 + i * 5, 60, 90))
+            img = Image.new("RGB", (150, 150), color=(30 + i * 5, 60 + i * 4, 90 + i * 3))
             draw = ImageDraw.Draw(img)
-            draw.text((10, 65), cat, fill=(255, 255, 255))
-            img.save(out_dir / f"placeholder_{i:02d}.jpg")
-        print(f"    {cat}: 10 placeholder images created")
+            draw.text((20, 65), f"{cat} #{i+1}", fill=(255, 255, 255))
+            img.save(out_dir / f"starter_{i:02d}.jpg")
+        print(f"    {cat}: 10 starter images created")
     _rebuild_index()
 
 
@@ -213,7 +219,7 @@ def _rebuild_index(counts: dict | None = None) -> None:
             index.append({"path": rel, "categories": [cat]})
 
     INDEX_PATH.write_text(json.dumps(index, indent=2))
-    print(f"  Written {len(index)} entries → {INDEX_PATH.relative_to(ROOT)}")
+    print(f"  Written {len(index)} entries -> {INDEX_PATH.relative_to(ROOT)}")
 
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -221,7 +227,7 @@ def _rebuild_index(counts: dict | None = None) -> None:
 # ═════════════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    print("CAPTCHA Solver Testbed — Dataset Downloader")
+    print("CAPTCHA Solver Testbed - Dataset Downloader")
     print("============================================")
     print(f"Root     : {ROOT}")
     print(f"Data dir : {DATA_DIR}")
@@ -231,7 +237,7 @@ if __name__ == "__main__":
     download_digit_dataset()
     download_grid_dataset()
 
-    print("\n🎉 All done! Next steps:")
+    print("\nAll done! Next steps:")
     print("   1.  Start the site:  uvicorn app.main:app --reload")
     print("   2.  Train your agent on: data/digit_samples/")
     print("   3.  Benchmark via the API:  GET /api/captcha-digit  etc.")

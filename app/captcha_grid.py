@@ -68,11 +68,20 @@ def _load_index() -> None:
 
 def get_available_categories() -> list[str]:
     """Return categories that have enough images to form a grid."""
+    global _index
+    if not _index and settings.index_path.exists():
+        _load_index()
+
     min_needed = settings.grid_min_pos  # at least this many positives
     return [
         cat for cat in settings.grid_categories
         if len(_by_category.get(cat, [])) >= min_needed
     ]
+
+
+# Auto-load on import if index file exists
+if settings.index_path.exists():
+    _load_index()
 
 
 def generate_grid_captcha(target_category: Optional[str] = None) -> dict:

@@ -11,7 +11,7 @@ sqlmodel==0.0.19
 # SQLite is built-in to Python; swap DATABASE_URL for Postgres in production
 
 # Auth / Security
-passlib[bcrypt]==1.7.4
+bcrypt>=4.0.0
 
 # CAPTCHA generation
 captcha==0.6.0

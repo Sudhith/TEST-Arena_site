@@ -20,6 +20,12 @@ import json
 import sys
 from pathlib import Path
 
+# Force utf-8 encoding on standard output for Windows cp1252 consoles
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 IMAGES_DIR = DATA_DIR / "images"
@@ -52,7 +58,7 @@ def build_index() -> list[dict]:
 
 def main() -> None:
     print("Building data/index.json")
-    print("─" * 40)
+    print("-" * 40)
 
     if not IMAGES_DIR.is_dir():
         print(f"ERROR: {IMAGES_DIR} does not exist.")
@@ -62,11 +68,11 @@ def main() -> None:
     index = build_index()
     INDEX_PATH.write_text(json.dumps(index, indent=2))
 
-    print("─" * 40)
-    print(f"✅ Written {len(index)} entries → {INDEX_PATH.relative_to(ROOT)}")
+    print("-" * 40)
+    print(f"[OK] Written {len(index)} entries -> {INDEX_PATH.relative_to(ROOT)}")
 
     if len(index) < 40:
-        print("\n⚠  WARNING: Fewer than 40 images total across all categories.")
+        print("\n[WARN] Fewer than 40 images total across all categories.")
         print("   The grid CAPTCHA needs at least 9 images per challenge.")
         print("   Run scripts/download_dataset.py to get more images.")
 
