@@ -28,11 +28,11 @@ COPY data/          ./data/
 # SQLite DB lives at runtime only (ephemeral on Render free tier — by design).
 # For persistent users set DATABASE_URL to a Postgres connection string.
 
-# Non-root user for security
-RUN useradd -m appuser
+# Non-root user for security with ownership of /app to write runtime SQLite database
+RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000
 
-# Uvicorn: binds to platform $PORT if provided (Render, Cloud Run, Railway) or defaults to 8000
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2 --access-log"]
+# Uvicorn: binds to platform $PORT (Render sets PORT=10000) with fallback to 8000
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1 --access-log"]

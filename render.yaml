@@ -6,8 +6,6 @@ services:
     region: oregon
     healthCheckPath: /api/health
     envVars:
-      - key: PORT
-        value: 8000
       - key: ENVIRONMENT
         value: production
       - key: SECRET_KEY
