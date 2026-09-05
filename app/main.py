@@ -30,10 +30,14 @@ Registers all routes:
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 from sqlmodel import Session
 
 from app.auth import (
@@ -50,6 +54,9 @@ from app.dependencies import flash, get_flashed, get_optional_user, require_logi
 
 settings = get_settings()
 
+# ── Rate limiter ──────────────────────────────────────────────────────────────
+limiter = Limiter(key_func=get_remote_address, default_limits=[settings.rate_limit])
+
 # ── App init ──────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="CAPTCHA Solver Testbed",
@@ -61,6 +68,23 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+
+# ── Middleware ─────────────────────────────────────────────────────────────────
+
+# Attach slowapi rate limiter
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Security headers on every response
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    if settings.environment == "production":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
 
 # Static files + templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -334,7 +358,8 @@ class GridVerifyRequest(BaseModel):
 # ── Digit CAPTCHA API ─────────────────────────────────────────────────────────
 
 @app.get("/api/captcha-digit", tags=["Digit CAPTCHA"])
-def fetch_digit_captcha(db: Session = Depends(get_session)):
+@limiter.limit(settings.rate_limit)
+def fetch_digit_captcha(request: Request, db: Session = Depends(get_session)):
     """
     Generate a new 6-digit CAPTCHA challenge.
 
@@ -350,7 +375,8 @@ def fetch_digit_captcha(db: Session = Depends(get_session)):
 
 
 @app.post("/api/verify-digit", tags=["Digit CAPTCHA"])
-def submit_digit_answer(body: DigitVerifyRequest, db: Session = Depends(get_session)):
+@limiter.limit(settings.rate_limit)
+def submit_digit_answer(request: Request, body: DigitVerifyRequest, db: Session = Depends(get_session)):
     """
     Submit an answer for a digit CAPTCHA challenge.
 
@@ -364,7 +390,9 @@ def submit_digit_answer(body: DigitVerifyRequest, db: Session = Depends(get_sess
 # ── Grid CAPTCHA API ──────────────────────────────────────────────────────────
 
 @app.get("/api/captcha-grid", tags=["Grid CAPTCHA"])
+@limiter.limit(settings.rate_limit)
 def fetch_grid_captcha(
+    request: Request,
     category: Optional[str] = None,
     db: Session = Depends(get_session),
 ):
@@ -397,7 +425,8 @@ def fetch_grid_captcha(
 
 
 @app.post("/api/verify-grid", tags=["Grid CAPTCHA"])
-def submit_grid_answer(body: GridVerifyRequest, db: Session = Depends(get_session)):
+@limiter.limit(settings.rate_limit)
+def submit_grid_answer(request: Request, body: GridVerifyRequest, db: Session = Depends(get_session)):
     """
     Submit selected tile indices for a grid CAPTCHA challenge.
 
