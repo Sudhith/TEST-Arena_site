@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — TEST ARENA{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+
+  <!-- Welcome -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-white mb-1">
+      Welcome, <span class="text-indigo-400">{{ current_user.username }}</span> 👋
+    </h1>
+    <p class="text-gray-400">You've successfully passed the CAPTCHA. Here's your research dashboard.</p>
+  </div>
+
+  <!-- Ephemeral DB notice -->
+  <div class="bg-amber-900/40 border border-amber-700 rounded-xl px-5 py-4 mb-8 flex gap-3">
+    <svg class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>
+    <div>
+      <p class="text-amber-300 text-sm font-medium">Research Testbed Notice</p>
+      <p class="text-amber-200/70 text-xs mt-0.5">
+        User accounts are <strong>not persisted</strong> across server restarts on the free-hosted version
+        (SQLite is ephemeral on Render). This is by design for a research testbed.
+        To persist accounts, set <code class="bg-amber-900 px-1 rounded">DATABASE_URL</code> to a Postgres URL.
+      </p>
+    </div>
+  </div>
+
+  <!-- Quick links grid -->
+  <div class="grid md:grid-cols-3 gap-4 mb-8">
+
+    <a href="/docs" target="_blank"
+       class="bg-gray-800 border border-gray-700 hover:border-indigo-500 rounded-xl p-5 transition-colors group">
+      <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm">API Docs</h3>
+      <p class="text-gray-500 text-xs mt-1">OpenAPI spec for all 7 endpoints</p>
+    </a>
+
+    <a href="/api/captcha-digit" target="_blank"
+       class="bg-gray-800 border border-gray-700 hover:border-indigo-500 rounded-xl p-5 transition-colors group">
+      <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+        </svg>
+      </div>
+      <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm">Fetch Digit CAPTCHA</h3>
+      <p class="text-gray-500 text-xs mt-1">GET /api/captcha-digit</p>
+    </a>
+
+    <a href="/api/captcha-grid" target="_blank"
+       class="bg-gray-800 border border-gray-700 hover:border-indigo-500 rounded-xl p-5 transition-colors group">
+      <div class="w-8 h-8 bg-indigo-700 rounded-lg flex items-center justify-center mb-3">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+        </svg>
+      </div>
+      <h3 class="font-semibold text-white group-hover:text-indigo-300 transition-colors text-sm">Fetch Grid CAPTCHA</h3>
+      <p class="text-gray-500 text-xs mt-1">GET /api/captcha-grid</p>
+    </a>
+
+  </div>
+
+  <!-- API cheat sheet -->
+  <div class="bg-gray-800 border border-gray-700 rounded-xl p-6">
+    <h2 class="font-bold text-white mb-4 text-sm">Agent Integration Quick Reference</h2>
+    <pre class="text-xs text-gray-300 overflow-x-auto leading-relaxed"><code># 1. Fetch a digit CAPTCHA
+curl http://localhost:8000/api/captcha-digit
+
+# 2. Verify your answer
+curl -X POST http://localhost:8000/api/verify-digit \
+  -H "Content-Type: application/json" \
+  -d '{"session_id": "...", "answer": "384729"}'
+
+# 3. Fetch a grid CAPTCHA
+curl http://localhost:8000/api/captcha-grid
+
+# 4. Verify selected tile indices
+curl -X POST http://localhost:8000/api/verify-grid \
+  -H "Content-Type: application/json" \
+  -d '{"session_id": "...", "selected_indices": [0, 3, 7]}'</code></pre>
+  </div>
+
+</div>
+{% endblock %}

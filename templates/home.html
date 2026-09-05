@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}TEST ARENA — CAPTCHA Solver Testbed{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-20">
+
+  <!-- Hero -->
+  <div class="text-center mb-16">
+    <div class="inline-flex items-center gap-2 bg-indigo-900/50 border border-indigo-700 rounded-full px-4 py-1.5 text-sm text-indigo-300 mb-6">
+      <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+      Research Platform — ₹0 / month
+    </div>
+    <h1 class="text-5xl font-extrabold text-white mb-4 tracking-tight">
+      CAPTCHA <span class="text-indigo-400">Solver Testbed</span>
+    </h1>
+    <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+      A self-hosted arena to train and benchmark AI agents against real-world CAPTCHA challenges.
+      Two CAPTCHA types. Full REST API. Zero cost.
+    </p>
+  </div>
+
+  <!-- CAPTCHA Type Cards -->
+  <div class="grid md:grid-cols-2 gap-6 mb-16">
+
+    <!-- Digit CAPTCHA card -->
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6 hover:border-indigo-600 transition-colors">
+      <div class="w-10 h-10 bg-indigo-700 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold text-white mb-2">6-Digit Numeric CAPTCHA</h2>
+      <p class="text-gray-400 text-sm mb-4">
+        Distorted digits with noise, curves, and rotation — replicating university/bank login CAPTCHAs.
+        Perfect for training OCR and CRNN models.
+      </p>
+      <div class="flex gap-3">
+        <a href="/login-digit"
+           class="flex-1 text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
+                  py-2 rounded-lg transition-colors">
+          Login with Digits
+        </a>
+        <a href="/docs#/default/fetch_digit_captcha_api_captcha_digit_get" target="_blank"
+           class="flex-1 text-center border border-gray-600 hover:border-indigo-500 text-gray-300
+                  hover:text-white text-sm font-medium py-2 rounded-lg transition-colors">
+          API Docs ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- Grid CAPTCHA card -->
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 p-6 hover:border-indigo-600 transition-colors">
+      <div class="w-10 h-10 bg-indigo-700 rounded-xl flex items-center justify-center mb-4">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+        </svg>
+      </div>
+      <h2 class="text-xl font-bold text-white mb-2">Image Selection CAPTCHA</h2>
+      <p class="text-gray-400 text-sm mb-4">
+        Real reCAPTCHA v2 style — "Select all images with a bus". Grid of 9 tiles from actual
+        reCAPTCHA datasets. Train object detection and image classification models.
+      </p>
+      <div class="flex gap-3">
+        <a href="/login-grid"
+           class="flex-1 text-center bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium
+                  py-2 rounded-lg transition-colors">
+          Login with Grid
+        </a>
+        <a href="/docs#/default/fetch_grid_captcha_api_captcha_grid_get" target="_blank"
+           class="flex-1 text-center border border-gray-600 hover:border-indigo-500 text-gray-300
+                  hover:text-white text-sm font-medium py-2 rounded-lg transition-colors">
+          API Docs ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent flow diagram -->
+  <div class="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 mb-16">
+    <h2 class="text-lg font-bold text-white mb-4">AI Agent Benchmark Flow</h2>
+    <div class="flex flex-wrap items-center gap-2 text-sm">
+      <div class="bg-gray-700 rounded-lg px-3 py-2 text-gray-200 font-mono">GET /api/captcha-digit</div>
+      <span class="text-gray-500">→</span>
+      <div class="bg-gray-700 rounded-lg px-3 py-2 text-gray-200">Agent solves</div>
+      <span class="text-gray-500">→</span>
+      <div class="bg-gray-700 rounded-lg px-3 py-2 text-gray-200 font-mono">POST /api/verify-digit</div>
+      <span class="text-gray-500">→</span>
+      <div class="bg-green-900 border border-green-700 rounded-lg px-3 py-2 text-green-200 font-mono">
+        &#123;"success": true&#125;
+      </div>
+    </div>
+    <p class="text-gray-500 text-xs mt-3">
+      Full OpenAPI spec at <a href="/docs" class="text-indigo-400 hover:text-indigo-300">/docs</a>.
+      Returns <code class="bg-gray-700 px-1 rounded">correct_answer</code> /
+      <code class="bg-gray-700 px-1 rounded">correct_indices</code> on every response for training signal.
+    </p>
+  </div>
+
+  <!-- Register CTA -->
+  <div class="text-center">
+    <p class="text-gray-400 mb-4">Create an account to test the full login flow</p>
+    <a href="/register"
+       class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
+              px-8 py-3 rounded-xl transition-colors text-sm">
+      Register &rarr;
+    </a>
+  </div>
+
+</div>
+{% endblock %}
