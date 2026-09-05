@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Login — Digit CAPTCHA{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4">
+  <div class="w-full max-w-md">
+
+    <!-- Card -->
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 p-8">
+
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-indigo-600 mb-4">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-white">Sign In</h1>
+        <p class="text-gray-400 text-sm mt-1">6-Digit Numeric CAPTCHA</p>
+      </div>
+
+      <!-- Flash messages -->
+      {% for msg in messages %}
+      <div class="mb-4 px-4 py-3 rounded-lg text-sm
+        {% if msg.category == 'success' %}bg-green-900 text-green-200 border border-green-700
+        {% else %}bg-red-900 text-red-200 border border-red-700{% endif %}">
+        {{ msg.message }}
+      </div>
+      {% endfor %}
+
+      <!-- Login form -->
+      <form method="post" action="/login-digit" class="space-y-5">
+
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-300 mb-1">Username</label>
+          <input
+            id="username" name="username" type="text" required autocomplete="username"
+            value="{{ form_username | default('') }}"
+            class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5
+                   placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="your username"
+          >
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+          <input
+            id="password" name="password" type="password" required autocomplete="current-password"
+            class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5
+                   placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            placeholder="••••••••"
+          >
+        </div>
+
+        <!-- CAPTCHA -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">
+            Type the 6 digits shown below
+          </label>
+
+          <!-- Image + refresh button -->
+          <div class="flex items-center gap-3 mb-3">
+            <div class="bg-gray-900 rounded-lg p-1 border border-gray-600">
+              <img
+                id="captcha-img"
+                src="/captcha-image/{{ session_id }}"
+                alt="CAPTCHA image — 6 digits"
+                width="280" height="90"
+                class="rounded"
+              >
+            </div>
+            <button
+              type="button" id="refresh-captcha"
+              class="flex-shrink-0 text-sm text-indigo-400 hover:text-indigo-300
+                     border border-indigo-700 hover:border-indigo-500 rounded-lg px-3 py-2
+                     transition-colors duration-150"
+              title="Get a new CAPTCHA"
+            >↻ Refresh</button>
+          </div>
+
+          <!-- Hidden session_id (updated by digit.js on refresh) -->
+          <input type="hidden" name="session_id" id="session-id" value="{{ session_id }}">
+
+          <input
+            name="captcha_answer" type="text" required maxlength="6" inputmode="numeric"
+            pattern="[0-9]{6}" autocomplete="off" spellcheck="false"
+            class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5
+                   placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                   tracking-widest text-center text-lg font-mono"
+            placeholder="· · · · · ·"
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold
+                 rounded-lg py-3 transition-colors duration-150 focus:outline-none
+                 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+        >
+          Sign In
+        </button>
+
+      </form>
+
+      <!-- Footer links -->
+      <div class="mt-6 text-center text-sm text-gray-400 space-y-1">
+        <p>Try the other CAPTCHA type: <a href="/login-grid" class="text-indigo-400 hover:text-indigo-300">Image Grid Login</a></p>
+        <p>No account? <a href="/register" class="text-indigo-400 hover:text-indigo-300">Register here</a></p>
+      </div>
+
+    </div><!-- /card -->
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/digit.js"></script>
+{% endblock %}
