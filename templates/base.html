@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en" class="h-full dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}CAPTCHA Solver Testbed{% endblock %}</title>
+  <title>{% block title %}TEST ARENA — AI CAPTCHA Benchmarking Platform{% endblock %}</title>
 
-  <!-- Tailwind CSS (CDN — no build step) -->
+  <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,8 +14,20 @@
         extend: {
           colors: {
             brand: {
-              DEFAULT: '#6366f1', // indigo-500
-              dark:    '#4f46e5', // indigo-600
+              DEFAULT: '#10b981', // Emerald 500
+              hover:   '#34d399', // Emerald 400
+              dark:    '#059669', // Emerald 600
+              glow:    '#00f59b', // Mint
+            },
+            amber: {
+              accent:  '#f59e0b',
+            },
+            obsidian: {
+              950: '#06070a',
+              900: '#090a0f',
+              800: '#12141c',
+              700: '#1a1d28',
+              600: '#272b3c',
             }
           }
         }
@@ -23,56 +35,105 @@
     }
   </script>
 
-  <!-- Custom styles -->
+  <!-- Cyber-Obsidian Design System Stylesheet -->
   <link rel="stylesheet" href="/static/css/style.css">
 
   {% block head %}{% endblock %}
 </head>
 
-<body class="dark bg-gray-900 text-gray-100 min-h-full flex flex-col">
+<body class="bg-[#090a0f] text-zinc-100 min-h-full flex flex-col cyber-grid-bg antialiased selection:bg-emerald-500/20 selection:text-emerald-300">
 
-  <!-- Navigation -->
-  <nav class="border-b border-gray-700 bg-gray-800/80 backdrop-blur-sm sticky top-0 z-50">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 text-white font-bold text-lg hover:text-indigo-300 transition-colors">
-        <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-        </svg>
-        TEST ARENA
+  <!-- Navbar -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-[#090a0f]/80 border-b border-white/[0.08] transition-all">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="/" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:shadow-emerald-500/40 group-hover:scale-105 transition-all">
+          <svg class="w-5 h-5 text-zinc-950 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-extrabold text-lg tracking-wider text-white group-hover:text-emerald-400 transition-colors">
+              TEST<span class="text-emerald-400 font-normal">ARENA</span>
+            </span>
+            <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              v1.0
+            </span>
+          </div>
+          <p class="text-[10px] text-zinc-500 hidden sm:block tracking-wide">AI CAPTCHA BENCHMARK LAB</p>
+        </div>
       </a>
 
-      <div class="flex items-center gap-4 text-sm">
-        <a href="/login-digit" class="text-gray-300 hover:text-white transition-colors">Digit Login</a>
-        <a href="/login-grid"  class="text-gray-300 hover:text-white transition-colors">Grid Login</a>
-        <a href="/register"    class="text-gray-300 hover:text-white transition-colors">Register</a>
+      <!-- Navigation Links -->
+      <nav class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm font-medium">
+        <a href="/login-digit" class="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-all">
+          Digit Login
+        </a>
+        <a href="/login-grid" class="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-all">
+          Grid Login
+        </a>
+        <a href="/register" class="px-3 py-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-all">
+          Register
+        </a>
+
         {% if current_user %}
-        <a href="/dashboard"   class="text-gray-300 hover:text-white transition-colors">Dashboard</a>
-        <a href="/logout"
-           class="bg-red-700 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-md transition-colors">
+        <a href="/dashboard" class="px-3 py-1.5 rounded-lg text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          Dashboard
+        </a>
+        <a href="/logout" class="px-3 py-1.5 rounded-lg text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition-all">
           Logout
         </a>
         {% endif %}
-        <a href="/docs" target="_blank"
-           class="bg-indigo-700 hover:bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-md transition-colors">
-          API Docs
-        </a>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Main content -->
+        <a href="/docs" target="_blank"
+           class="btn-emerald px-3.5 py-1.5 text-xs flex items-center gap-1.5">
+          <span>API Docs</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- Page Content -->
   <main class="flex-1">
     {% block content %}{% endblock %}
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-gray-800 py-4 text-center text-xs text-gray-600">
-    CAPTCHA Solver Testbed &mdash; AI Research Platform &mdash;
-    <a href="https://github.com/Sudhith/TEST-Arena_site" target="_blank"
-       class="hover:text-gray-400 transition-colors">GitHub</a>
+  <footer class="border-t border-white/[0.08] bg-[#06070a]/90 py-8 text-xs text-zinc-500 mt-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>TEST ARENA — Autonomous CAPTCHA Benchmark Platform</span>
+        <span class="text-zinc-600">|</span>
+        <span class="text-emerald-400 font-mono">Zero Cost Tier (₹0)</span>
+      </div>
+      <div class="flex items-center gap-4 text-zinc-400">
+        <a href="/api/health" class="hover:text-emerald-400 transition-colors font-mono">/api/health</a>
+        <a href="/docs" class="hover:text-emerald-400 transition-colors">OpenAPI Spec</a>
+        <a href="https://github.com/Sudhith/TEST-Arena_site" target="_blank" class="hover:text-emerald-400 transition-colors flex items-center gap-1">
+          <span>GitHub</span>
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
   </footer>
 
+  <!-- Global Toast Notification Container -->
+  <div id="global-toast-container"></div>
+
+  <!-- Shared Scripts -->
+  <script src="/static/js/playground.js"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>
