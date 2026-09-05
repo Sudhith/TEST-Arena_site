@@ -4,6 +4,7 @@ services:
     runtime: docker
     plan: free
     region: oregon
+    autoDeployTrigger: commit
     healthCheckPath: /api/health
     envVars:
       - key: ENVIRONMENT
@@ -11,8 +12,4 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: RATE_LIMIT
-        value: 30/minute
-      # Optional: To persist user accounts permanently across restarts,
-      # add a free Postgres connection string:
-      # - key: DATABASE_URL
-      #   value: postgresql://...
+        value: 60/minute
