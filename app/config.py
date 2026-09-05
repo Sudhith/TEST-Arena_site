@@ -39,7 +39,8 @@ class Settings(BaseSettings):
     grid_max_pos: int = 4       # maximum number of positive tiles
 
     # Available target categories for the grid CAPTCHA
-    grid_categories: list[str] = ["bus", "car", "traffic_light", "bicycle"]
+    grid_categories: list[str] = ["bus", "car", "traffic_light", "bicycle", "hydrant"]
+
 
     # ── Paths (derived from project root) ────────────────────────────────
     # The project root is two levels above this file: TESTARENA/
