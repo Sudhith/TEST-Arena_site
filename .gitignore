@@ -52,6 +52,9 @@ htmlcov/
 # Docker
 *.dockerignore
 
-# Data — images ARE committed (baked into Docker image for Render)
-# but the runtime DB is not
+# Data — grid images ARE committed (baked into Docker for Render)
+# Digit training samples are NOT committed (too large, download separately)
 captcha_testbed.db
+data/digit_samples/
+# HuggingFace datasets cache
+~/.cache/huggingface/
